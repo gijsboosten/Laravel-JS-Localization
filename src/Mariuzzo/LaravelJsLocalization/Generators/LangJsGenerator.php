@@ -136,6 +136,8 @@ class LangJsGenerator
                 continue;
             }
 
+            $prefix = substr($file->getFileName(), 0, -4);
+
             $key = substr($pathName, 0, -4);
             $key = str_replace('\\', '.', $key);
             $key = str_replace('/', '.', $key);
@@ -146,7 +148,21 @@ class LangJsGenerator
 
             $fullPath = $path.DIRECTORY_SEPARATOR.$pathName;
             if ($extension == 'php') {
-                $messages[$key] = include $fullPath;
+
+                // set the locale based on the filename
+                $locale = explode('.', $key)[0];
+
+                // load the original strings from file and convert to dot notation
+                $originalStrings = include $fullPath;
+                $translationKeys = array_keys(Arr::dot($originalStrings));
+
+                // translate all strings based on the set locale
+                $translatedStrings = [];
+                foreach($translationKeys as $k) {
+                    $translatedStrings = Arr::add($translatedStrings, $k, trans($prefix.'.'.$k, [], $locale));
+                }
+
+                $messages[$key] = $translatedStrings;
             } else {
                 $key = $key.$this->stringsDomain;
                 $fileContent = file_get_contents($fullPath);
