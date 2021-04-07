@@ -5,6 +5,7 @@ namespace Mariuzzo\LaravelJsLocalization\Generators;
 use InvalidArgumentException;
 use Illuminate\Filesystem\Filesystem as File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use JShrink\Minifier;
 
 /**
